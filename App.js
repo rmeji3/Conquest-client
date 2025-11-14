@@ -13,6 +13,7 @@ import SocialScreen from './screens/SocialScreen';
 import SavedScreen from './screens/SavedScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoginScreen from './screens/LoginScreen';
+import RegistrationScreen from './screens/RegistrationScreen';
 
 import AuthContext from './AuthContext';
 
@@ -53,6 +54,11 @@ function AuthStack() {
       <Stack.Screen
         name="Login"
         component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegistrationScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
