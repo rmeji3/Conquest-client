@@ -1,0 +1,42 @@
+# node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# expo
+.expo/
+.expo-shared/
+.expo/packager-info.json
+.expo/devices.json
+
+# metro bundler
+.metro/
+
+# logs
+*.log
+
+# macOS
+.DS_Store
+
+# android
+android/
+*.keystore
+
+# windows
+Thumbs.db
+
+# vscode
+.vscode/
+
+# environment files
+.env
+*.env.local
+
+# build
+dist/
+build/
+web-build/
+
+# caches
+.cache/
