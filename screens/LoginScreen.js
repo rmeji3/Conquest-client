@@ -26,10 +26,18 @@ export default function LoginScreen() {
       // Call backend here
       const data = await loginRequest(email.trim(), password);
 
+      console.log('Login response:', data);
+
       // Expecting: data.token and data.user
-      await SecureStore.setItemAsync('auth_token', data.token);
+      // Ensure token is a string
+      const token = String(data.token || data.accessToken || '');
+      if (!token) {
+        throw new Error('No authentication token received from server');
+      }
+
+      await SecureStore.setItemAsync('auth_token', token);
       // store user JSON
-      await SecureStore.setItemAsync('user', JSON.stringify(data.user));
+      await SecureStore.setItemAsync('user', JSON.stringify(data.user || {}));
 
       setIsLoggedIn(true);
     } catch (err) {

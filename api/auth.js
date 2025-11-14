@@ -1,11 +1,13 @@
 // api/auth.js
-const BASE_URL = 'http://10.0.2.2:3000'; 
-// ^ For Android emulator talking to backend running on your Windows machine.
-// If you're using a physical phone, you'll use your PC's local IP like:
-// const BASE_URL = 'http://192.168.1.50:3000';
+// Using your Mac's local IP address - this works with Expo Go on iOS Simulator
+const BASE_URL = 'http://10.0.0.91:5055'; 
+// ^ For iOS simulator with Expo Go - must use your computer's IP, not localhost
+// For Android emulator, use: 'http://10.0.2.2:5055'
+// For physical device, use the same IP: 'http://10.0.0.91:5055'
 
 export async function loginRequest(email, password) {
-  const res = await fetch(`${BASE_URL}/auth/login`, {
+  console.log('Attempting to connect to:', `${BASE_URL}/api/Auth/login`);
+  const res = await fetch(`${BASE_URL}/api/Auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
