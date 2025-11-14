@@ -93,12 +93,16 @@ export default function RegistrationScreen({ navigation }) {
 
       // User is now registered + logged in → go to main app
       setIsLoggedIn(true);
-    } catch (err) {
-      // If username already exists or email is taken, the backend should send an error
-      console.log('Registration error:', err);
-      setErrorMsg(err.message || 'Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
+
+    } 
+    
+    // If username already exists or email is taken, the backend should send an error
+    catch (err) {
+        console.log('Registration error:', err);
+        setErrorMsg(err.message); // show backend message
+    }
+    finally {
+        setLoading(false);
     }
   }
 

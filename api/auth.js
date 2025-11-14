@@ -99,10 +99,12 @@ export async function registerRequest({
     let message = 'Registration failed';
 
     try {
-      const data = await res.json();
-      if (data.error) message = data.error;
-      if (data.message) message = data.message;
-    } catch (err) {}
+      // Backend is returning plain string, not JSON
+      const text = await res.text();
+      if (text) message = text;
+    } catch (err) {
+      // ignore parsing errors
+    }
 
     throw new Error(message);
   }
@@ -135,4 +137,51 @@ export async function getCurrentUser(accessToken) {
 
   const data = await res.json();
   return data;
+}
+
+/**
+ * Change password for the currently logged-in user.
+ *
+ * POST /api/Auth/password/change
+ * Body: { currentPassword, newPassword }
+ *
+ * Requires Authorization: Bearer <accessToken> header.
+ */
+export async function changePasswordRequest(accessToken, currentPassword, newPassword) {
+  console.log('Attempting to connect to:', `${BASE_URL}/api/Auth/password/change`);
+
+  const res = await fetch(`${BASE_URL}/api/Auth/password/change`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,  // token from login/register
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+    }),
+  });
+
+  if (!res.ok) {
+    let message = 'Password change failed';
+
+    try {
+      // Your backend uses BadRequest("some message") → plain string body
+      const text = await res.text();
+      if (text) message = text;
+    } catch (err) {
+      // ignore parse errors
+    }
+
+    throw new Error(message);
+  }
+
+  // If backend returns JSON you care about, parse it here:
+  try {
+    const data = await res.json();
+    return data;
+  } catch {
+    // No JSON body, nothing special returned
+    return null;
+  }
 }

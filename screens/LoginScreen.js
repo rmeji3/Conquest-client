@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }) {
         throw new Error('No authentication token received from server');
       }
 
-      // 2️⃣ Persist auth data securely on the device
+      // Persist auth data securely on the device
       await SecureStore.setItemAsync('auth_token', token);
       await SecureStore.setItemAsync(
         'user',
@@ -56,7 +56,7 @@ export default function LoginScreen({ navigation }) {
         await SecureStore.setItemAsync('auth_expiresUtc', data.expiresUtc);
       }
 
-      // 3️⃣ Flip auth state so App.js shows the main tabs instead of Login
+      // Flip auth state so App.js shows the main tabs instead of Login
       setIsLoggedIn(true);
     } catch (err) {
       console.log('Login error:', err);
@@ -96,15 +96,25 @@ export default function LoginScreen({ navigation }) {
         <Button title="Log In" onPress={handleLogin} />
       )}
 
-      {/* Simple button to go to Register screen */}
       {!loading && (
-        <View style={{ marginTop: 16 }}>
-          <Button
-            title="Create an account"
-            onPress={() => navigation.navigate('Register')}
-          />
-        </View>
+        <>
+          <View style={{ marginTop: 16 }}>
+            <Button
+              title="Create an account"
+              onPress={() => navigation.navigate('Register')}
+            />
+          </View>
+
+          {/* Forgot password navigation */}
+          <View style={{ marginTop: 8 }}>
+            <Button
+              title="Forgot password?"
+              onPress={() => navigation.navigate('ResetPassword')}
+            />
+          </View>
+        </>
       )}
+
     </View>
   );
 }

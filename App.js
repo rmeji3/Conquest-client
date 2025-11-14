@@ -14,6 +14,7 @@ import SavedScreen from './screens/SavedScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
 
 import AuthContext from './AuthContext';
 
@@ -59,6 +60,11 @@ function AuthStack() {
       <Stack.Screen
         name="Register"
         component={RegistrationScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPasswordScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
