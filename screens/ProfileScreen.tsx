@@ -1,9 +1,11 @@
 // screens/ProfileScreen.tsx
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, Button, ActivityIndicator, TextInput, Image } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { Ionicons } from '@expo/vector-icons';
 import AuthContext from '../AuthContext';
-import { getCurrentUser, changePasswordRequest, User } from '../api/auth';
+import {changePasswordRequest, User } from '../api/auth';
+import { getCurrentUserProfile } from '../api/profile';
 
 // Same password rule as registration:
 // - at least 8 characters
@@ -52,7 +54,7 @@ export default function ProfileScreen() {
 
         if (token) {
           try {
-            const freshUser = await getCurrentUser(token);
+            const freshUser = await getCurrentUserProfile(token);
             setUser(freshUser);
             await SecureStore.setItemAsync('user', JSON.stringify(freshUser));
           } catch (err) {
@@ -128,61 +130,72 @@ export default function ProfileScreen() {
 
   if (loadingProfile) {
     return (
-      <View style={styles.center}>
+      <View className="flex-1 justify-center items-center px-6 bg-white">
         <ActivityIndicator size="large" />
-        <Text style={{ marginTop: 8 }}>Loading profile...</Text>
+        <Text className="mt-2 text-gray-700">Loading profile...</Text>
       </View>
     );
   }
 
   if (!user) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>
-          {profileErrorMsg || 'No user data found.'}
-        </Text>
+      <View className="flex-1 justify-center items-center px-6 bg-white">
+        <Text className="text-red-600 mb-3">{profileErrorMsg || 'No user data found.'}</Text>
         <Button title="Log Out" onPress={handleLogout} />
       </View>
     );
   }
 
-  const { displayName, firstName, lastName, email } = user;
+  const { displayName, firstName, lastName, email, profileImageUrl } = user as any;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+    <View className="flex-1 px-6 pt-12 bg-white">
+      <Text className="text-2xl font-bold mb-6">Profile</Text>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Display name:</Text>
-        <Text style={styles.value}>{displayName || '(not set)'}</Text>
+      {/* Profile image container */}
+      <View className="items-center mb-6">
+        {profileImageUrl ? (
+          <Image
+            source={{ uri: profileImageUrl }}
+            className="w-24 h-24 rounded-full bg-gray-200"
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="w-24 h-24 rounded-full bg-gray-200 justify-center items-center">
+            <Ionicons name="person" size={50} color="#666" />
+          </View>
+        )}
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Full name:</Text>
-        <Text style={styles.value}>
-          {(firstName || '') + ' ' + (lastName || '')}
-        </Text>
+      <View className="mb-3">
+        <Text className="text-sm text-gray-500">Display name:</Text>
+        <Text className="text-lg font-medium">{displayName || '(not set)'}</Text>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{email}</Text>
+      <View className="mb-3">
+        <Text className="text-sm text-gray-500">Full name:</Text>
+        <Text className="text-lg font-medium">{(firstName || '') + ' ' + (lastName || '')}</Text>
+      </View>
+
+      <View className="mb-3">
+        <Text className="text-sm text-gray-500">Email:</Text>
+        <Text className="text-lg font-medium">{email}</Text>
       </View>
 
       {/* CHANGE PASSWORD SECTION */}
-      <View style={[styles.section, { marginTop: 24 }]}>
-        <Text style={styles.subTitle}>Change Password</Text>
+      <View className="mb-3 mt-6">
+        <Text className="text-lg font-semibold mb-2">Change Password</Text>
 
         {passwordErrorMsg ? (
-          <Text style={styles.errorText}>{passwordErrorMsg}</Text>
+          <Text className="text-red-600 mb-2">{passwordErrorMsg}</Text>
         ) : null}
 
         {passwordSuccessMsg ? (
-          <Text style={styles.successText}>{passwordSuccessMsg}</Text>
+          <Text className="text-green-600 mb-2">{passwordSuccessMsg}</Text>
         ) : null}
 
         <TextInput
-          style={styles.input}
+          className="border border-gray-300 rounded px-3 py-2 mb-2 bg-white"
           placeholder="Current password"
           secureTextEntry
           value={currentPassword}
@@ -190,7 +203,7 @@ export default function ProfileScreen() {
         />
 
         <TextInput
-          style={styles.input}
+          className="border border-gray-300 rounded px-3 py-2 mb-2 bg-white"
           placeholder="New password"
           secureTextEntry
           value={newPassword}
@@ -198,7 +211,7 @@ export default function ProfileScreen() {
         />
 
         <TextInput
-          style={styles.input}
+          className="border border-gray-300 rounded px-3 py-2 mb-2 bg-white"
           placeholder="Confirm new password"
           secureTextEntry
           value={confirmNewPassword}
@@ -206,66 +219,15 @@ export default function ProfileScreen() {
         />
 
         {changingPassword ? (
-          <ActivityIndicator style={{ marginTop: 8 }} />
+          <ActivityIndicator className="mt-2" />
         ) : (
           <Button title="Update Password" onPress={handleChangePassword} />
         )}
       </View>
 
-      <View style={{ marginTop: 32 }}>
+      <View className="mt-8">
         <Button title="Log Out" onPress={handleLogout} />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    paddingTop: 48,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    marginBottom: 24,
-  },
-  subTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  section: {
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 14,
-    color: '#555',
-  },
-  value: {
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 4,
-    marginBottom: 8,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 8,
-  },
-  successText: {
-    color: 'green',
-    marginBottom: 8,
-  },
-});

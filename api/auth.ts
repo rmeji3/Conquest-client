@@ -133,31 +133,6 @@ export async function registerRequest({
   return data;
 }
 
-/**
- * Fetch the current user info from /api/Auth/me using the accessToken.
- *
- * GET /api/Auth/me
- * Headers: Authorization: Bearer <token>
- *
- * Returns:
- * { id, email, displayName, firstName, lastName }
- */
-export async function getCurrentUser(accessToken: string): Promise<User> {
-  const res = await fetch(`${BASE_URL}/api/Auth/me`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch current user');
-  }
-
-  const data: User = await res.json();
-  return data;
-}
 
 /**
  * Change password for the currently logged-in user.

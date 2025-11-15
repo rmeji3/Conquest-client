@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   Button,
-  StyleSheet,
   ActivityIndicator,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
@@ -81,14 +80,14 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Conquest</Text>
-      <Text style={styles.subtitle}>Sign in to continue</Text>
+    <View className="flex-1 justify-center px-6 bg-white">
+      <Text className="text-3xl font-bold mb-2">Conquest</Text>
+      <Text className="text-base mb-4 text-gray-700">Sign in to continue</Text>
 
-      {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
+      {errorMsg ? <Text className="text-red-600 mb-3">{errorMsg}</Text> : null}
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Email"
         autoCapitalize="none"
         keyboardType="email-address"
@@ -97,7 +96,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Password"
         secureTextEntry
         value={password}
@@ -105,14 +104,14 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       />
 
       {loading ? (
-        <ActivityIndicator style={{ marginTop: 12 }} />
+        <ActivityIndicator className="mt-3" />
       ) : (
         <Button title="Log In" onPress={handleLogin} />
       )}
 
       {!loading && (
         <>
-          <View style={{ marginTop: 16 }}>
+          <View className="mt-4">
             <Button
               title="Create an account"
               onPress={() => navigation.navigate('Register')}
@@ -120,7 +119,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           </View>
 
           {/* Forgot password navigation */}
-          <View style={{ marginTop: 8 }}>
+          <View className="mt-2">
             <Button
               title="Forgot password?"
               onPress={() => navigation.navigate('ResetPassword')}
@@ -128,36 +127,6 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           </View>
         </>
       )}
-
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 4,
-    marginBottom: 12,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 12,
-  },
-});
