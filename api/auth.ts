@@ -1,15 +1,45 @@
-// api/auth.js
+// api/auth.ts
 
 // BASE_URL is the root of backend API.
 //
 // In dev, this is usually machine's IP + port.
 // - If running on iOS simulator or a physical device on Wi-Fi,
-//   use computer’s LAN IP, e.g. 'http://10.0.0.50:5055'.
+//   use computer's LAN IP, e.g. 'http://10.0.0.50:5055'.
 // - If running on Android emulator, use 'http://10.0.2.2:5055'.
 //   (10.0.2.2 is a special address that points to host machine.)
 //
 // IMPORTANT: This must match whatever backend is actually running on.
-const BASE_URL = 'http://10.0.0.50:5055';
+const BASE_URL = 'http://10.0.0.119:5055';
+
+// Type definitions for API responses and requests
+export interface User {
+  id?: string;
+  email: string;
+  displayName?: string;
+  firstName?: string;
+  lastName?: string;
+  userName?: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  expiresUtc: string;
+  user: User;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  token: string;
+  newPassword: string;
+}
 
 /**
  * Call the backend login endpoint.
@@ -24,7 +54,7 @@ const BASE_URL = 'http://10.0.0.50:5055';
  *   "user": { ... }
  * }
  */
-export async function loginRequest(email, password) {
+export async function loginRequest(email: string, password: string): Promise<LoginResponse> {
   console.log('Attempting to connect to:', `${BASE_URL}/api/Auth/login`);
 
   const res = await fetch(`${BASE_URL}/api/Auth/login`, {
@@ -55,7 +85,7 @@ export async function loginRequest(email, password) {
 
   // If everything is OK, parse and return the JSON body.
   // Expected shape: { accessToken, expiresUtc, user }
-  const data = await res.json();
+  const data: LoginResponse = await res.json();
   return data;
 }
 
@@ -78,7 +108,7 @@ export async function registerRequest({
   firstName,
   lastName,
   userName,
-}) {
+}: RegisterRequest): Promise<LoginResponse> {
   console.log('Attempting to connect to:', `${BASE_URL}/api/Auth/register`);
 
   const res = await fetch(`${BASE_URL}/api/Auth/register`, {
@@ -109,7 +139,7 @@ export async function registerRequest({
     throw new Error(message);
   }
 
-  const data = await res.json();
+  const data: LoginResponse = await res.json();
   return data;
 }
 
@@ -122,7 +152,7 @@ export async function registerRequest({
  * Returns:
  * { id, email, displayName, firstName, lastName }
  */
-export async function getCurrentUser(accessToken) {
+export async function getCurrentUser(accessToken: string): Promise<User> {
   const res = await fetch(`${BASE_URL}/api/Auth/me`, {
     method: 'GET',
     headers: {
@@ -135,7 +165,7 @@ export async function getCurrentUser(accessToken) {
     throw new Error('Failed to fetch current user');
   }
 
-  const data = await res.json();
+  const data: User = await res.json();
   return data;
 }
 
@@ -147,7 +177,11 @@ export async function getCurrentUser(accessToken) {
  *
  * Requires Authorization: Bearer <accessToken> header.
  */
-export async function changePasswordRequest(accessToken, currentPassword, newPassword) {
+export async function changePasswordRequest(
+  accessToken: string,
+  currentPassword: string,
+  newPassword: string
+): Promise<void> {
   console.log('Attempting to connect to:', `${BASE_URL}/api/Auth/password/change`);
 
   const res = await fetch(`${BASE_URL}/api/Auth/password/change`, {
@@ -178,10 +212,49 @@ export async function changePasswordRequest(accessToken, currentPassword, newPas
 
   // If backend returns JSON you care about, parse it here:
   try {
-    const data = await res.json();
-    return data;
+    await res.json();
   } catch {
     // No JSON body, nothing special returned
-    return null;
   }
+}
+
+/**
+ * Reset password using email and reset token.
+ *
+ * POST /api/Auth/password/reset
+ * Body: { email, token, newPassword }
+ */
+export async function resetPasswordRequest({
+  email,
+  token,
+  newPassword,
+}: ResetPasswordRequest): Promise<void> {
+  console.log('Attempting to connect to:', `${BASE_URL}/api/Auth/password/reset`);
+
+  const res = await fetch(`${BASE_URL}/api/Auth/password/reset`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      token,
+      newPassword,
+    }),
+  });
+
+  if (!res.ok) {
+    let message = 'Password reset failed';
+
+    try {
+      const text = await res.text();
+      if (text) message = text;
+    } catch (err) {
+      // ignore parsing errors
+    }
+
+    throw new Error(message);
+  }
+
+  // No return value expected
 }

@@ -1,4 +1,4 @@
-// screens/ResetPasswordScreen.js
+// screens/ResetPasswordScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -8,20 +8,33 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { resetPasswordRequest } from '../api/auth';
+
+type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  ResetPassword: undefined;
+};
+
+type ResetPasswordScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'ResetPassword'>;
+
+interface ResetPasswordScreenProps {
+  navigation: ResetPasswordScreenNavigationProp;
+}
 
 // Same password rule as registration:
 // - at least 8 characters
 // - at least one uppercase letter
 // - at least one special character
-function isValidPassword(pw) {
+function isValidPassword(pw: string): boolean {
   if (pw.length < 8) return false;
   const hasUppercase = /[A-Z]/.test(pw);
   const hasSpecial = /[!@#$%^&*()\-_=+{}:;'",\.\?/`~]/.test(pw);
   return hasUppercase && hasSpecial;
 }
 
-export default function ResetPasswordScreen({ navigation }) {
+export default function ResetPasswordScreen({ navigation }: ResetPasswordScreenProps) {
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -71,7 +84,8 @@ export default function ResetPasswordScreen({ navigation }) {
       // setTimeout(() => navigation.navigate('Login'), 1000);
     } catch (err) {
       console.log('Reset password error:', err);
-      setErrorMsg(err.message || 'Password reset failed. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Password reset failed. Please try again.';
+      setErrorMsg(errorMessage);
     } finally {
       setLoading(false);
     }

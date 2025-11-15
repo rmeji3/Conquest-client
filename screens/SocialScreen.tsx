@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, ListRenderItem } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
-import { getFriends } from '../api/friends';
+import { getFriends, Friend } from '../api/friends';
 
 export default function SocialScreen() {
   const isFocused = useIsFocused();
-  const [friends, setFriends] = useState([]);
+  const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -23,10 +23,11 @@ export default function SocialScreen() {
       }
 
       const data = await getFriends(token);
-      setFriends(data.friendsList || data || []);
+      setFriends(data.friendsList || []);
     } catch (err) {
       console.log('Error fetching friends:', err);
-      setError(err.message || 'Failed to load friends');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load friends';
+      setError(errorMessage);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -45,7 +46,7 @@ export default function SocialScreen() {
     loadFriends(true);
   };
 
-  const renderFriend = ({ item }) => (
+  const renderFriend: ListRenderItem<Friend> = ({ item }) => (
     <View style={styles.friendItem}>
       <Text style={styles.friendName}>
         {item.firstName && item.lastName 
@@ -87,7 +88,7 @@ export default function SocialScreen() {
             <Text style={styles.emptyText}>No friends yet</Text>
           </View>
         }
-        contentContainerStyle={friends.length === 0 ? styles.emptyList : null}
+        contentContainerStyle={friends.length === 0 ? styles.emptyList : undefined}
       />
     </View>
   );
@@ -142,4 +143,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-

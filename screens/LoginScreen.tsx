@@ -1,4 +1,4 @@
-// screens/LoginScreen.js
+// screens/LoginScreen.tsx
 import React, { useState, useContext } from 'react';
 import {
   View,
@@ -9,11 +9,24 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AuthContext from '../AuthContext';
 import { loginRequest } from '../api/auth';
 
+type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  ResetPassword: undefined;
+};
+
+type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
+
+interface LoginScreenProps {
+  navigation: LoginScreenNavigationProp;
+}
+
 // If you want navigation (e.g. "Go to Register"), accept { navigation }
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation }: LoginScreenProps) {
   const { setIsLoggedIn } = useContext(AuthContext);
 
   // Local state for form fields and UI
@@ -56,11 +69,12 @@ export default function LoginScreen({ navigation }) {
         await SecureStore.setItemAsync('auth_expiresUtc', data.expiresUtc);
       }
 
-      // Flip auth state so App.js shows the main tabs instead of Login
+      // Flip auth state so App.tsx shows the main tabs instead of Login
       setIsLoggedIn(true);
     } catch (err) {
       console.log('Login error:', err);
-      setErrorMsg(err.message || 'Login failed. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Login failed. Please try again.';
+      setErrorMsg(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-// screens/RegistrationScreen.js
+// screens/RegistrationScreen.tsx
 import React, { useState, useContext } from 'react';
 import {
   View,
@@ -9,11 +9,24 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AuthContext from '../AuthContext';
 import { registerRequest } from '../api/auth';
 
+type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  ResetPassword: undefined;
+};
+
+type RegistrationScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Register'>;
+
+interface RegistrationScreenProps {
+  navigation: RegistrationScreenNavigationProp;
+}
+
 // Helper: validate password against your rules
-function isValidPassword(pw) {
+function isValidPassword(pw: string): boolean {
   if (pw.length < 8) return false;
 
   const hasUppercase = /[A-Z]/.test(pw);
@@ -22,7 +35,7 @@ function isValidPassword(pw) {
   return hasUppercase && hasSpecial;
 }
 
-export default function RegistrationScreen({ navigation }) {
+export default function RegistrationScreen({ navigation }: RegistrationScreenProps) {
   const { setIsLoggedIn } = useContext(AuthContext);
 
   // Form fields
@@ -99,7 +112,8 @@ export default function RegistrationScreen({ navigation }) {
     // If username already exists or email is taken, the backend should send an error
     catch (err) {
         console.log('Registration error:', err);
-        setErrorMsg(err.message); // show backend message
+        const errorMessage = err instanceof Error ? err.message : 'Registration failed';
+        setErrorMsg(errorMessage); // show backend message
     }
     finally {
         setLoading(false);

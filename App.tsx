@@ -18,8 +18,22 @@ import ResetPasswordScreen from './screens/ResetPasswordScreen';
 
 import AuthContext from './AuthContext';
 
-const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
+type MainTabParamList = {
+  Explore: undefined;
+  Social: undefined;
+  Home: undefined;
+  Saved: undefined;
+  Profile: undefined;
+};
+
+type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  ResetPassword: undefined;
+};
+
+const Tab = createBottomTabNavigator<MainTabParamList>();
+const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 function MainTabs() {
   return (
@@ -28,7 +42,7 @@ function MainTabs() {
       screenOptions={({ route }) => ({
         headerShown: true,
         tabBarIcon: ({ color, size }) => {
-          let iconName = 'ellipse-outline';
+          let iconName: keyof typeof Ionicons.glyphMap = 'ellipse-outline';
 
           if (route.name === 'Explore') iconName = 'search';
           if (route.name === 'Social') iconName = 'people-outline';

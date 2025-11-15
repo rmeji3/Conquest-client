@@ -1,15 +1,15 @@
-// screens/ProfileScreen.js
+// screens/ProfileScreen.tsx
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import AuthContext from '../AuthContext';
-import { getCurrentUser, changePasswordRequest } from '../api/auth';
+import { getCurrentUser, changePasswordRequest, User } from '../api/auth';
 
 // Same password rule as registration:
 // - at least 8 characters
 // - at least one uppercase letter
 // - at least one special character
-function isValidPassword(pw) {
+function isValidPassword(pw: string): boolean {
   if (pw.length < 8) return false;
   const hasUppercase = /[A-Z]/.test(pw);
   const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw);
@@ -19,7 +19,7 @@ function isValidPassword(pw) {
 export default function ProfileScreen() {
   const { setIsLoggedIn } = useContext(AuthContext);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [profileErrorMsg, setProfileErrorMsg] = useState('');
 
@@ -119,7 +119,8 @@ export default function ProfileScreen() {
       setConfirmNewPassword('');
     } catch (err) {
       console.log('Change password error:', err);
-      setPasswordErrorMsg(err.message || 'Failed to change password.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to change password.';
+      setPasswordErrorMsg(errorMessage);
     } finally {
       setChangingPassword(false);
     }
