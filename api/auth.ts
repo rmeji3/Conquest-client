@@ -1,15 +1,5 @@
 // api/auth.ts
-
-// BASE_URL is the root of backend API.
-//
-// In dev, this is usually machine's IP + port.
-// - If running on iOS simulator or a physical device on Wi-Fi,
-//   use computer's LAN IP, e.g. 'http://10.0.0.50:5055'.
-// - If running on Android emulator, use 'http://10.0.2.2:5055'.
-//   (10.0.2.2 is a special address that points to host machine.)
-//
-// IMPORTANT: This must match whatever backend is actually running on.
-const BASE_URL = 'http://10.0.0.119:5055';
+import { BASE_URL } from '@env';
 
 // Type definitions for API responses and requests
 export interface User {

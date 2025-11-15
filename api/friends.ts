@@ -1,9 +1,5 @@
 // api/friends.ts
-// Using your Mac's local IP address - this works with Expo Go on iOS Simulator
-const BASE_URL = 'http://10.0.0.119:5055'; 
-// ^ For iOS simulator with Expo Go - must use your computer's IP, not localhost
-// For Android emulator, use: 'http://10.0.2.2:5055'
-// For physical device, use the same IP: 'http://10.0.0.91:5055'
+import { BASE_URL } from '@env';
 
 export interface Friend {
   id?: string;
