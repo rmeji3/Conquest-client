@@ -1,9 +1,11 @@
 // screens/ProfileScreen.tsx
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, Button, StyleSheet, ActivityIndicator, TextInput, Image } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { Ionicons } from '@expo/vector-icons';
 import AuthContext from '../AuthContext';
-import { getCurrentUser, changePasswordRequest, User } from '../api/auth';
+import {changePasswordRequest, User } from '../api/auth';
+import { getCurrentUserProfile } from '../api/profile';
 
 // Same password rule as registration:
 // - at least 8 characters
@@ -52,7 +54,7 @@ export default function ProfileScreen() {
 
         if (token) {
           try {
-            const freshUser = await getCurrentUser(token);
+            const freshUser = await getCurrentUserProfile(token);
             setUser(freshUser);
             await SecureStore.setItemAsync('user', JSON.stringify(freshUser));
           } catch (err) {
@@ -146,11 +148,26 @@ export default function ProfileScreen() {
     );
   }
 
-  const { displayName, firstName, lastName, email } = user;
+  const { displayName, firstName, lastName, email, profileImageUrl } = user as any;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
+
+      {/* Profile image container */}
+      <View style={styles.profileImageContainer}>
+        {profileImageUrl ? (
+          <Image
+            source={{ uri: profileImageUrl }}
+            style={styles.profileImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.profileIconCircle}>
+            <Ionicons name="person" size={50} color="#666" />
+          </View>
+        )}
+      </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>Display name:</Text>
@@ -235,6 +252,24 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '700',
     marginBottom: 24,
+  },
+  profileImageContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  profileIconCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#f0f0f0',
   },
   subTitle: {
     fontSize: 18,
