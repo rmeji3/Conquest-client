@@ -1,14 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Home (Map) Screen</Text>
+    <View className="flex-1 items-center justify-center">
+      <Text className="text-lg font-semibold">Home (Map) Screen</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-});
+// StyleSheet removed, using NativeWind utility classes

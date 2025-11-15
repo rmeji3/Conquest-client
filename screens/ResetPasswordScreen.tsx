@@ -1,13 +1,6 @@
 // screens/ResetPasswordScreen.tsx
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, TextInput, Button, ActivityIndicator } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { resetPasswordRequest } from '../api/auth';
 
@@ -92,17 +85,15 @@ export default function ResetPasswordScreen({ navigation }: ResetPasswordScreenP
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Reset Password</Text>
-      <Text style={styles.subtitle}>
-        Enter your email, reset token, and new password.
-      </Text>
+    <View className="flex-1 justify-center px-6 bg-white">
+      <Text className="text-2xl font-bold mb-2">Reset Password</Text>
+      <Text className="text-sm mb-4 text-gray-700">Enter your email, reset token, and new password.</Text>
 
-      {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
-      {successMsg ? <Text style={styles.success}>{successMsg}</Text> : null}
+      {errorMsg ? <Text className="text-red-600 mb-3">{errorMsg}</Text> : null}
+      {successMsg ? <Text className="text-green-600 mb-3">{successMsg}</Text> : null}
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Email"
         autoCapitalize="none"
         keyboardType="email-address"
@@ -111,7 +102,7 @@ export default function ResetPasswordScreen({ navigation }: ResetPasswordScreenP
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Reset token"
         autoCapitalize="none"
         value={token}
@@ -119,7 +110,7 @@ export default function ResetPasswordScreen({ navigation }: ResetPasswordScreenP
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="New password"
         secureTextEntry
         value={newPassword}
@@ -127,7 +118,7 @@ export default function ResetPasswordScreen({ navigation }: ResetPasswordScreenP
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Confirm new password"
         secureTextEntry
         value={confirmPassword}
@@ -135,13 +126,13 @@ export default function ResetPasswordScreen({ navigation }: ResetPasswordScreenP
       />
 
       {loading ? (
-        <ActivityIndicator style={{ marginTop: 12 }} />
+        <ActivityIndicator className="mt-3" />
       ) : (
         <Button title="Reset Password" onPress={handleResetPassword} />
       )}
 
       {!loading && (
-        <View style={{ marginTop: 16 }}>
+        <View className="mt-4">
           <Button
             title="Back to Login"
             onPress={() => navigation.navigate('Login')}
@@ -151,19 +142,3 @@ export default function ResetPasswordScreen({ navigation }: ResetPasswordScreenP
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center' },
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 8 },
-  subtitle: { fontSize: 14, marginBottom: 16 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 4,
-    marginBottom: 12,
-  },
-  error: { color: 'red', marginBottom: 12 },
-  success: { color: 'green', marginBottom: 12 },
-});

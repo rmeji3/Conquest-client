@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   Button,
-  StyleSheet,
   ActivityIndicator,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
@@ -121,13 +120,13 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create an account</Text>
+    <View className="flex-1 justify-center px-6 bg-white">
+      <Text className="text-2xl font-bold mb-4">Create an account</Text>
 
-      {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
+      {errorMsg ? <Text className="text-red-600 mb-3">{errorMsg}</Text> : null}
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Email"
         autoCapitalize="none"
         keyboardType="email-address"
@@ -136,7 +135,7 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Username"
         autoCapitalize="none"
         value={userName}
@@ -144,7 +143,7 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Password"
         secureTextEntry
         value={password}
@@ -152,27 +151,27 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="First name"
         value={firstName}
         onChangeText={setFirstName}
       />
 
       <TextInput
-        style={styles.input}
+        className="border border-gray-300 rounded px-3 py-2 mb-3 bg-white"
         placeholder="Last name"
         value={lastName}
         onChangeText={setLastName}
       />
 
       {loading ? (
-        <ActivityIndicator style={{ marginTop: 12 }} />
+        <ActivityIndicator className="mt-3" />
       ) : (
         <Button title="Register" onPress={handleRegister} />
       )}
 
       {!loading && (
-        <View style={{ marginTop: 16 }}>
+        <View className="mt-4">
           <Button
             title="Already have an account? Log in"
             onPress={() => navigation.navigate('Login')}
@@ -182,17 +181,3 @@ export default function RegistrationScreen({ navigation }: RegistrationScreenPro
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center' },
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 16 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 4,
-    marginBottom: 12,
-  },
-  error: { color: 'red', marginBottom: 12 },
-});
